@@ -1,5 +1,5 @@
 # FlipDotDisplay_Clock1_SWv1
-This is an Arduino program, and more importantly a library I created that will drive a 45x7 flip dot sign with my custom controller PCB.
+This is an Arduino program, and more importantly, a library I created which will drive a 45x7 flip dot sign with my custom controller PCB.
 
 The Arduino program displays a simple clock on a 45x7 flip dot panel. Time is read from a connected IIC RTC. The code will quickly write minute changes, and then once per hour, fully re-write the display from scratch.
 
