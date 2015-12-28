@@ -7,4 +7,4 @@ This Arduino program displays a simple clock on a 45x7 flip dot panel. Time is r
 
 Note that you will need to try various `onPulseLengthMicros`, `offPulseLengthMicros`, `onRecoverTime`, and `offRecoverTime settings` to produce reliable dot flips on your specific power supply and voltage.
 
-If you need help understanding what my `Matrix_CoProcessor` library is doing, please see examples from the FlipDot Bit Stream Workbook Excel file in this github project.
+If you need help understanding what my `Matrix_CoProcessor` library is doing, please see examples from the [FlipDot Bit Stream Workbook Excel file](FlipDot Bit Stream Workbook.xlsx) in this github project.
