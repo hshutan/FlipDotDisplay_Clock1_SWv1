@@ -122,10 +122,13 @@ time_t printTimeStyle1(time_t _lastTime, time_t _newTime) {
     FreshWriteMinute(_newTime);
   }
 
+  if (isAM(_lastTime) != isAM(_newTime)) {
+    CleverEraseAMPM(_lastTime);
+    FreshWriteAMPM(_newTime);
+  }
+
   lastTime = _newTime;
 }
-
-
 
 void FreshWriteHour(time_t inTime) {
   byte _hour = hour(inTime);
@@ -146,14 +149,11 @@ void FreshWriteHour(time_t inTime) {
   }
 }
 
-
-
 void FreshWriteColon() {
   mcp.drawChar(16, 1, ':', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
 }
 
 void FreshWriteMinute(time_t inTime) {
-
   byte minVar = minute(inTime);
   if (minVar > 9) {
     mcp.drawChar(21, 1, String(minVar)[0], onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
@@ -196,9 +196,7 @@ void CleverEraseColon() {
   mcp.drawCharInverse(16, 1, ':', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
 }
 
-
 void CleverEraseMinute(time_t inTime) {
-
   byte minVar = minute(inTime);
   if (minVar > 9) {
     mcp.drawCharInverse(21, 1, String(minVar)[0], onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
@@ -217,9 +215,6 @@ void CleverEraseAMPM(time_t inTime) {
   }
 
 }
-
-
-
 
 void fullDisplayClear() {
   for (int x = 1; x < 45; x++) {
