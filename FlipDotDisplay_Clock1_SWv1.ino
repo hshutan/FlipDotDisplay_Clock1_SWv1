@@ -1,13 +1,10 @@
-
 /*
  * 45x7 Flip Dot Matrix Clock
  * Clock version/type: 1
  *
  * HLS 2015-12-24
  *
- * Dev'd on Arduino Pro Mini 8MHz (Like UNO)
  * Runs on (Rev 1) of my 45x7 controller board.
- * Planned for Teensy 3.2
  *
  * UNO's hardware SPI pins:
  * 11, MOSI, SER on my board
@@ -23,9 +20,6 @@
 #include <Wire.h>  // Uses default SDA/SCL pins.
 #include <DS1307RTC.h>  // a basic DS1307 library that returns time as a time_t
 #include <Timezone.h>    //https://github.com/JChristensen/Timezone
-//#include <Metro.h> // A handy timer-job utility class.
-
-//Metro metroWriteDisplay = Metro(500);         // ms
 
 //US Central Time Zone (Chicago, Houston)
 TimeChangeRule usCDT = {"CDT", Second, dowSunday, Mar, 2, -300};
@@ -79,7 +73,7 @@ void setup()
   setSyncProvider(RTC.get); // Set time from RTC on boot up.
   setSyncInterval(2700); // Re-read time from RTC every 45 minutes.
 
-  lastTime = usCT.toLocal(now(), &tcr);//now();
+  lastTime = usCT.toLocal(now(), &tcr);
 
   fullDisplayClear();
 
@@ -106,79 +100,10 @@ void loop()
     Serial.println("Okay.");
   }
 
-    // Ea loop, refresh local var to be local time, from UTC current time.
+  // Ea loop, refresh local var to be local time, from UTC current time.
   local = usCT.toLocal(now(), &tcr);
-  
 
-  if ((!digitalRead(button1)) && (!digitalRead(button4))) {
-    // Enter setup mode by pressing buttons 1 and 4 at the same time.
-    CleverEraseHour(lastTime);
-    CleverEraseColon();
-    CleverEraseMinute(lastTime);
-    CleverEraseAMPM(lastTime);
-
-    mcp.drawChar(1, 1, 'S', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1 + 6, 1, 'e', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1 + 6 + 6, 1, 't', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1, 1, 'S', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1 + 6, 1, 'e', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1 + 6 + 6, 1, 't', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-
-    mcp.drawChar(1 + 6 + 6 + 12, 1, 'M', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-    mcp.drawChar(1 + 6 + 6 + 12, 1, 'M', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-
-    while (digitalRead(button4)) {
-      // While the user has not exited setup mode:
-      // MINUTE set mode
-      if (!digitalRead(button2)) {
-        adjustTime(-60);
-        //RTC.set(now());
-        delay(500);
-      }
-      if (!digitalRead(button3)) {
-        adjustTime(60);
-        //RTC.set(now());
-        delay(500);
-      }
-
-      if (!digitalRead(button1)) {
-        // Change to HOUR set mode
-        mcp.drawCharInverse(1 + 6 + 6 + 12, 1, 'M', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-        mcp.drawChar(1 + 6 + 6 + 12, 1, 'H', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-        mcp.drawChar(1 + 6 + 6 + 12, 1, 'H', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-
-        while (digitalRead(button4)) {
-          // While the user has not exited:
-          // HOUR set mode
-          if (!digitalRead(button2)) {
-            adjustTime(-3600);
-            //RTC.set(now());
-            delay(500);
-          }
-          if (!digitalRead(button3)) {
-            adjustTime(3600);
-            //RTC.set(now());
-            delay(500);
-          }
-        }
-        mcp.drawCharInverse(1 + 6 + 6 + 12, 1, 'H', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-        mcp.drawChar(1 + 6 + 6 + 12, 1, 'M', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-        mcp.drawChar(1 + 6 + 6 + 12, 1, 'M', onPulseLengthMicros, offPulseLengthMicros, onRecoverTime, offRecoverTime, false, 1, 1);
-        // This could use some improvement, technically a second button 4
-        // press will be needed to exist the larger while loop. Okay if instructions
-        // are to hold 4 to exit setup.
-      }
-    }
-    // Exit setup mode.
-    fullDisplayClear();
-    FreshWriteHour(lastTime);
-    FreshWriteColon();
-    FreshWriteMinute(lastTime);
-    FreshWriteAMPM(lastTime);
-  }
-
-
-  if (minute(lastTime) != minute(usCT.toLocal(now(), &tcr))) { //was now()
+  if (minute(lastTime) != minute(usCT.toLocal(now(), &tcr))) {
     printTimeStyle1(lastTime, usCT.toLocal(now(), &tcr));
   }
 
@@ -188,36 +113,13 @@ void loop()
 time_t printTimeStyle1(time_t _lastTime, time_t _newTime) {
 
   if (hour(_lastTime) != hour(_newTime)) {
-    // CleverEraseHour(_lastTime);
-    // FreshWriteHour(_newTime);
-
-    fullDisplayClear();
-
+    CleverEraseHour(_lastTime);
     FreshWriteHour(_newTime);
-    FreshWriteColon();
+  }
+
+  if (minute(_lastTime) != minute(_newTime)) {
+    CleverEraseMinute(_lastTime);
     FreshWriteMinute(_newTime);
-    FreshWriteAMPM(_newTime);
-    FreshWriteHour(_newTime);
-    FreshWriteMinute(_newTime);
-
-  } else {
-
-    if (minute(_lastTime) != minute(_newTime)) {
-      CleverEraseMinute(_lastTime);
-      FreshWriteMinute(_newTime);
-    }
-
-    //    if (isAM(_lastTime) != isAM(_newTime)) {
-    //      CleverEraseAMPM(_lastTime);
-    //      FreshWriteAMPM(_newTime);
-    //    }
-
-    FreshWriteHour(_newTime);
-    FreshWriteMinute(_newTime);
-    //    FreshWriteAMPM(_newTime);
-    //    FreshWriteHour(_newTime);
-    //    FreshWriteMinute(_newTime);
-    //   FreshWriteAMPM(_newTime);
   }
 
   lastTime = _newTime;
@@ -329,7 +231,6 @@ void fullDisplayClear() {
 
   //fix for weird backwards dot on my display.
   mcp.dotOn(45, 7, offPulseLengthMicros, offRecoverTime);
-  //fix for weird backwards dot on my display.
   mcp.dotOn(45, 7, offPulseLengthMicros, offRecoverTime);
 }
 
