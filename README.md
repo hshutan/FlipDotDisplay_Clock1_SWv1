@@ -1,3 +1,5 @@
+**This project is old! I do not recommend my hardware based project anymore, check out my RS-485 protocol-based projects! [Main Flipdot Project Page Here](https://github.com/hshutan/FlipDotCompendium)**
+---
 # FlipDotDisplay_Clock1_SWv1
 This is an Arduino program, and more importantly, a library I created which will drive a 45x7 flip dot sign with my custom controller PCB.
 
